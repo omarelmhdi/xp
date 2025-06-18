@@ -184,6 +184,27 @@ app = Client(
     workdir="/tmp"
 )
 
+from flask import Flask, request
+
+flask_app = Flask(__name__)
+
+@flask_app.route('/')
+def home():
+    return 'Bot is running!'
+
+@flask_app.route('/webhook', methods=['POST'])
+def webhook():
+    if request.method == 'POST':
+        update = request.get_json()
+        if update:
+            # Pyrogram handles updates internally, so we just pass the update
+            # This part might need more specific handling depending on Pyrogram's webhook setup
+            # For now, we'll just acknowledge receipt.
+            # In a real scenario, you might want to push this to a queue or process it asynchronously.
+            print("Received update:", update)
+            return 'ok', 200
+    return 'bad request', 400
+
 @app.on_message(filters.command("start"))
 async def start_cmd(client, message):
     welcome_text = (
